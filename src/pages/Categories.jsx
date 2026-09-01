@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { Navbar } from '../components/global/Navbar';
 import { Footer } from '../components/global/Footer';
-import { CategorySidebar } from '../components/categories/CategorySidebar';
+import { CategoryFilters } from '../components/categories/CategoryFilters';
 import { CategorySearchBar } from '../components/categories/CategorySearchBar';
 import { CategoryResults } from '../components/categories/CategoryResults';
 import { categoryOptions, categoryMap } from '../data/categories';
@@ -26,23 +26,55 @@ const products = [
 export function Categories() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState('');
+    const [priceRange, setPriceRange] = useState({ min: 0, max: 500 });
 
     const categoryParam = searchParams.get('tipo');
+    const offersParam = searchParams.get('ofertas');
     const initialFilter = categoryParam && categoryMap[categoryParam] ? categoryMap[categoryParam] : 'Tudo';
     const [activeFilter, setActiveFilter] = useState(initialFilter);
+    const [isOfferActive, setIsOfferActive] = useState(offersParam === 'true');
 
     const categoryOptionsWithAll = [{ id: 'all', label: 'Tudo' }, ...categoryOptions];
 
     const handleFilterChange = (filter) => {
         setActiveFilter(filter);
         if (filter === 'Tudo') {
-            setSearchParams({});
+            setSearchParams(isOfferActive ? { ofertas: 'true' } : {});
             return;
         }
 
         const selectedCategory = categoryOptions.find((item) => item.label === filter);
         if (selectedCategory) {
-            setSearchParams({ tipo: selectedCategory.id });
+            const params = { tipo: selectedCategory.id };
+            if (isOfferActive) {
+                params.ofertas = 'true';
+            }
+            setSearchParams(params);
+        }
+    };
+
+    const handleOffersClick = () => {
+        const newOfferState = !isOfferActive;
+        setIsOfferActive(newOfferState);
+
+        if (newOfferState) {
+            const params = { ofertas: 'true' };
+            if (activeFilter !== 'Tudo') {
+                const selectedCategory = categoryOptions.find((item) => item.label === activeFilter);
+                if (selectedCategory) {
+                    params.tipo = selectedCategory.id;
+                }
+            }
+            setSearchParams(params);
+        } else {
+            if (activeFilter !== 'Tudo') {
+                const selectedCategory = categoryOptions.find((item) => item.label === activeFilter);
+                if (selectedCategory) {
+                    setSearchParams({ tipo: selectedCategory.id });
+                }
+            } else {
+                setSearchParams({});
+            }
         }
     };
 
@@ -50,9 +82,10 @@ export function Categories() {
         return products.filter((product) => {
             const matchesFilter = activeFilter === 'Tudo' || product.categoria === activeFilter;
             const matchesSearch = product.titulo.toLowerCase().includes(searchTerm.toLowerCase());
-            return matchesFilter && matchesSearch;
+            const matchesPrice = true; // TODO: Adicionar preço aos produtos para filtro de preço funcionar
+            return matchesFilter && matchesSearch && matchesPrice;
         });
-    }, [activeFilter, searchTerm]);
+    }, [activeFilter, searchTerm, priceRange]);
 
     return (
         <div className="min-h-screen bg-[#FDF8EE] text-slate-800 font-sans flex flex-col justify-between">
@@ -77,10 +110,13 @@ export function Categories() {
 
             <main className="max-w-7xl mx-auto px-6 md:px-12 py-10 w-full flex-grow">
                 <div className="flex flex-col md:flex-row gap-8">
-                    <CategorySidebar
+                    <CategoryFilters
                         categoryOptionsWithAll={categoryOptionsWithAll}
                         activeFilter={activeFilter}
                         onFilterChange={(filter) => handleFilterChange(filter)}
+                        onPriceChange={(range) => setPriceRange(range)}
+                        isOfferActive={isOfferActive}
+                        onOffersClick={handleOffersClick}
                     />
 
                     <CategoryResults filteredProducts={filteredProducts} activeFilter={activeFilter} />

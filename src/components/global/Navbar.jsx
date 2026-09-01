@@ -28,7 +28,7 @@ export function Navbar({ cartCount = 0 }) {
 
                     <CategoryDropdown />
 
-                    <Link to="/ofertas" className={`hover:text-emerald-400 transition-colors pb-1 ${isActive('/ofertas') ? 'border-b-2 border-emerald-400 text-emerald-400 font-semibold' : 'text-slate-200'}`}>
+                    <Link to="/categorias?ofertas=true" className={`hover:text-emerald-400 transition-colors pb-1 ${location.pathname === '/categorias' && location.search.includes('ofertas=true') ? 'border-b-2 border-emerald-400 text-emerald-400 font-semibold' : 'text-slate-200'}`}>
                         Ofertas
                     </Link>
 
