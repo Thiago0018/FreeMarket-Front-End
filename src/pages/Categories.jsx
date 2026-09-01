@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, ChevronRight } from 'lucide-react';
 
 import { Navbar } from '../components/global/Navbar';
 import { Footer } from '../components/global/Footer';
-import { HighlightCard } from '../components/global/HighlightCard';
+import { CategorySidebar } from '../components/categories/CategorySidebar';
+import { CategorySearchBar } from '../components/categories/CategorySearchBar';
+import { CategoryResults } from '../components/categories/CategoryResults';
 import { categoryOptions, categoryMap } from '../data/categories';
 
 const products = [
@@ -70,94 +71,19 @@ export function Categories() {
                         </div>
                     </div>
 
-                    <div className="max-w-4xl mx-auto mt-8">
-                        <div className="relative flex items-center">
-                            <Search className="absolute left-4 w-5 h-5 text-slate-400" />
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Buscar por produtos e categorias..."
-                                className="w-full pl-12 pr-6 py-3.5 bg-white text-slate-800 placeholder-slate-400 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm md:text-base"
-                            />
-                        </div>
-                    </div>
+                    <CategorySearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
                 </div>
             </section>
 
             <main className="max-w-7xl mx-auto px-6 md:px-12 py-10 w-full flex-grow">
                 <div className="flex flex-col md:flex-row gap-8">
-                    <aside className="w-full md:w-72 flex-shrink-0">
-                        <div className="bg-[#F6E8D0] rounded-3xl p-5 shadow-sm border border-orange-100 sticky top-6">
-                            <div className="flex items-center justify-between mb-5">
-                                <h3 className="text-lg font-black uppercase tracking-wider text-slate-900">
-                                    Categorias
-                                </h3>
-                                <span className="text-[10px] text-slate-600 font-bold">{categoryOptionsWithAll.length - 1}</span>
-                            </div>
+                    <CategorySidebar
+                        categoryOptionsWithAll={categoryOptionsWithAll}
+                        activeFilter={activeFilter}
+                        onFilterChange={(filter) => handleFilterChange(filter)}
+                    />
 
-                            <div className="space-y-2">
-                                {categoryOptionsWithAll.map((category) => {
-                                    const isSelected = activeFilter === category.label;
-                                    return (
-                                        <button
-                                            key={category.id}
-                                            type="button"
-                                            onClick={() => handleFilterChange(category.label)}
-                                            className={`w-full flex items-center justify-between rounded-2xl px-3 py-3 text-left text-sm font-bold transition-colors ${isSelected
-                                                    ? 'bg-[#123035] text-white shadow-md'
-                                                    : 'text-slate-800 hover:bg-orange-200/60'
-                                                }`}
-                                        >
-                                            <span>{category.label}</span>
-                                            {category.label !== 'Tudo' && (
-                                                <ChevronRight className={`w-4 h-4 ${isSelected ? 'text-emerald-300' : 'text-slate-500'}`} />
-                                            )}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </aside>
-
-                    <div className="flex-1">
-                        <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
-                            <div>
-                                <h2 className="text-xl md:text-2xl font-black tracking-wide uppercase text-slate-900">
-                                    {activeFilter === 'Tudo' ? 'Todos os Produtos' : activeFilter}
-                                </h2>
-                            </div>
-
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
-                                <span className="font-semibold">{filteredProducts.length} itens</span>
-                                <ChevronRight className="w-4 h-4" />
-                            </div>
-                        </div>
-
-                        <section className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                            {filteredProducts.map((item) => (
-                                <div key={item.id} className="aspect-square">
-                                    <HighlightCard
-                                        id={item.id}
-                                        title={item.titulo}
-                                        image={item.img}
-                                        rating={item.rating}
-                                    />
-                                </div>
-                            ))}
-                        </section>
-
-                        {filteredProducts.length === 0 && (
-                            <div className="mt-10 rounded-3xl border border-dashed border-slate-300 bg-[#F6E8D0] p-10 text-center">
-                                <p className="text-lg font-black uppercase tracking-wide text-slate-800">
-                                    Nenhum produto encontrado
-                                </p>
-                                <p className="mt-2 text-sm text-slate-600">
-                                    Tente outra busca ou selecione outra categoria.
-                                </p>
-                            </div>
-                        )}
-                    </div>
+                    <CategoryResults filteredProducts={filteredProducts} activeFilter={activeFilter} />
                 </div>
             </main>
 
