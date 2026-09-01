@@ -1,25 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { categoryOptions } from '../../data/categories';
 
 export function CategoryDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
-    // Lista simples de opções de categorias
-    const categories = [
-        { id: 'hortifruti', label: 'Hortifruti & Verduras' },
-        { id: 'laticinios', label: 'Laticínio & Queijos' },
-        { id: 'graos', label: 'Grãos & Cereais' },
-        { id: 'doces', label: 'Doces & Compotas' },
-        { id: 'bebidas', label: 'Bebidas & Cafés' },
-        { id: 'paes', label: 'Pães & Artesanais' },
-        { id: 'doacoes', label: 'Doações & Sobras' },
-        { id: 'trocas', label: 'Produtos para Troca' },
-    ];
-
-    // Fecha o menu se o usuário clicar fora dele
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,7 +25,6 @@ export function CategoryDropdown() {
 
     return (
         <div className="relative inline-block text-left" ref={dropdownRef}>
-            {/* Botão de Toggle */}
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
@@ -47,9 +34,8 @@ export function CategoryDropdown() {
                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180 text-emerald-400' : ''}`} />
             </button>
 
-            {/* Lista Suspensa (Toggle List) Simples e Prática */}
             {isOpen && (
-                <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50">
                     <div className="px-3 py-1 border-b border-slate-100 mb-1">
                         <span className="text-[10px] font-black tracking-wider text-slate-400 uppercase">
                             Selecione uma Categoria
@@ -57,7 +43,7 @@ export function CategoryDropdown() {
                     </div>
 
                     <div className="max-h-60 overflow-y-auto">
-                        {categories.map((category) => (
+                        {categoryOptions.map((category) => (
                             <button
                                 key={category.id}
                                 onClick={() => handleSelectCategory(category.id)}
