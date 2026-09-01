@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
     Search,
     ChevronLeft,
     ChevronRight,
-    ShoppingBag,
-    Shirt,
-    Home as HomeIcon,
-    Wrench,
-    Palette
+    Coffee,
+    Candy,
+    Wine,
+    Croissant,
+    Milk,
+    Leaf,
+    Wheat,
+    Flame
 } from 'lucide-react';
 
 // Importação dos componentes isolados
@@ -15,26 +19,37 @@ import { Navbar } from '../components/global/Navbar';
 import { Footer } from '../components/global/Footer';
 import { HighlightCard } from '../components/global/HighlightCard';
 import { StoreCard } from '../components/home/StoreCard';
-import { CategoryCard } from '../components/home/CategoryCard';
+import { categoryOptions } from '../data/categories';
 
 export function Home() {
     const [searchTerm, setSearchTerm] = useState('');
+    const [categoryScrollPosition, setCategoryScrollPosition] = useState(0);
 
     // Mocks de dados
     const destaques = [
-        { id: 1, titulo: 'Artigo de Couro', rating: 5, img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80' },
+        { id: 1, titulo: 'Café Artesanal', rating: 5, img: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&q=80' },
         { id: 2, titulo: 'Doce Caseiro', rating: 5, img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400&q=80' },
-        { id: 3, titulo: 'Café Artesanal', rating: 5, img: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&q=80' },
-        { id: 4, titulo: 'Cerveja Local', rating: 5, img: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&q=80' },
+        { id: 3, titulo: 'Cerveja Local', rating: 5, img: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&q=80' },
+        { id: 4, titulo: 'Pão Artesanal', rating: 5, img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80' },
     ];
 
-    const categorias = [
-        { id: 'mercado', nome: 'Mercado', icon: ShoppingBag },
-        { id: 'moda', nome: 'Moda', icon: Shirt },
-        { id: 'casa', nome: 'Casa', icon: HomeIcon },
-        { id: 'artesanato', nome: 'Artesanato', icon: Palette },
-        { id: 'servicos', nome: 'Serviços', icon: Wrench },
-    ];
+    // Mapa de ícones para categorias de alimentos
+    const categoryIcons = {
+        cafes: Coffee,
+        doces: Candy,
+        bebidas: Wine,
+        padaria: Croissant,
+        laticinios: Milk,
+        hortifruti: Leaf,
+        cereais: Wheat,
+        tempero: Flame,
+    };
+
+    const handleCategoryScroll = (direction) => {
+        const newPosition = direction === 'left' ? categoryScrollPosition - 1 : categoryScrollPosition + 1;
+        const maxPosition = Math.max(0, categoryOptions.length - 5);
+        setCategoryScrollPosition(Math.min(Math.max(newPosition, 0), maxPosition));
+    };
 
     return (
         <div className="min-h-screen bg-[#FDF8EE] text-slate-800 font-sans flex flex-col justify-between">
@@ -133,17 +148,44 @@ export function Home() {
 
                 {/* Categorias */}
                 <section>
-                    <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6 tracking-wide uppercase">
-                        Categorias
-                    </h2>
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-wide uppercase">
+                            Categorias de Alimentos
+                        </h2>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => handleCategoryScroll('left')}
+                                disabled={categoryScrollPosition === 0}
+                                className="p-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => handleCategoryScroll('right')}
+                                disabled={categoryScrollPosition >= Math.max(0, categoryOptions.length - 5)}
+                                className="p-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        {categorias.map((cat) => (
-                            <CategoryCard
-                                key={cat.id}
-                                title={cat.nome}
-                                icon={cat.icon}
-                            />
-                        ))}
+                        {categoryOptions.slice(categoryScrollPosition, categoryScrollPosition + 5).map((cat) => {
+                            const IconComponent = categoryIcons[cat.id];
+                            return (
+                                <Link
+                                    key={cat.id}
+                                    to={`/categorias?tipo=${cat.id}`}
+                                    className="bg-[#F6E8D0] p-6 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer hover:bg-orange-200/50 transition-colors"
+                                >
+                                    <div className="mb-3 text-slate-800">
+                                        <IconComponent className="w-8 h-8 stroke-[1.5]" />
+                                    </div>
+                                    <span className="font-extrabold text-sm text-slate-900">{cat.label}</span>
+                                </Link>
+                            );
+                        })}
                     </div>
                 </section>
 

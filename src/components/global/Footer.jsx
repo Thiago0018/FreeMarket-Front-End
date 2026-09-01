@@ -4,7 +4,7 @@ import { MapPin, Globe, Mail, MessageCircle } from 'lucide-react';
 export function Footer() {
     return (
         <footer className="bg-[#123035] text-white pt-12 pb-8 px-6 md:px-12 mt-12 border-t border-emerald-900">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-xs">
 
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -20,21 +20,14 @@ export function Footer() {
                 </div>
 
                 <div className="space-y-2 text-slate-300">
-                    <p className="hover:text-white cursor-pointer">Home</p>
-                    <p className="hover:text-white cursor-pointer">Mercado</p>
-                    <p className="hover:text-white cursor-pointer">Casa</p>
-                    <p className="hover:text-white cursor-pointer">Artesanato</p>
-                </div>
-
-                <div className="space-y-2 text-slate-300">
-                    <p className="hover:text-white cursor-pointer">Moda</p>
-                    <p className="hover:text-white cursor-pointer">Casa</p>
-                    <p className="hover:text-white cursor-pointer">Artesanato</p>
-                    <p className="hover:text-white cursor-pointer">Serviços</p>
+                    <p className="font-bold text-slate-200 text-sm mb-3">Sobre</p>
+                    <p className="hover:text-white cursor-pointer">Quem Somos</p>
+                    <p className="hover:text-white cursor-pointer">Termos de Uso</p>
+                    <p className="hover:text-white cursor-pointer">Política de Privacidade</p>
                 </div>
 
                 <div className="space-y-3">
-                    <p className="font-bold text-slate-200 text-sm">Footer</p>
+                    <p className="font-bold text-slate-200 text-sm">Contato</p>
                     <div className="flex gap-3 text-white">
                         <a href="#" className="p-2 bg-emerald-900/50 rounded-full hover:bg-emerald-800 transition-colors">
                             <Globe className="w-4 h-4" />
