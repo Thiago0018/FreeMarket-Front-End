@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     Search,
     ChevronLeft,
@@ -22,6 +22,7 @@ import { StoreCard } from '../components/home/StoreCard';
 import { categoryOptions } from '../data/categories';
 
 export function Home() {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryScrollPosition, setCategoryScrollPosition] = useState(0);
 
@@ -95,6 +96,14 @@ export function Home() {
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter') {
+                                    const cleaned = searchTerm.trim();
+                                    if (cleaned) {
+                                        navigate(`/categorias?busca=${encodeURIComponent(cleaned)}`);
+                                    }
+                                }
+                            }}
                             placeholder="Buscar produtos e lojas..."
                             className="w-full pl-12 pr-6 py-3.5 bg-white text-slate-800 placeholder-slate-400 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm md:text-base"
                         />

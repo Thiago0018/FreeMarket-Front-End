@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { Navbar } from '../components/global/Navbar';
@@ -25,7 +25,7 @@ const products = [
 
 export function Categories() {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(searchParams.get('busca') || '');
     const [priceRange, setPriceRange] = useState({ min: 0, max: 500 });
 
     const categoryParam = searchParams.get('tipo');
@@ -34,48 +34,68 @@ export function Categories() {
     const [activeFilter, setActiveFilter] = useState(initialFilter);
     const [isOfferActive, setIsOfferActive] = useState(offersParam === 'true');
 
+    useEffect(() => {
+        setSearchTerm(searchParams.get('busca') || '');
+    }, [searchParams]);
+
     const categoryOptionsWithAll = [{ id: 'all', label: 'Tudo' }, ...categoryOptions];
 
     const handleFilterChange = (filter) => {
         setActiveFilter(filter);
+        const params = new URLSearchParams(searchParams);
+
         if (filter === 'Tudo') {
-            setSearchParams(isOfferActive ? { ofertas: 'true' } : {});
-            return;
+            params.delete('tipo');
+        } else {
+            const selectedCategory = categoryOptions.find((item) => item.label === filter);
+            if (selectedCategory) {
+                params.set('tipo', selectedCategory.id);
+            }
         }
 
-        const selectedCategory = categoryOptions.find((item) => item.label === filter);
-        if (selectedCategory) {
-            const params = { tipo: selectedCategory.id };
-            if (isOfferActive) {
-                params.ofertas = 'true';
-            }
-            setSearchParams(params);
+        if (isOfferActive) {
+            params.set('ofertas', 'true');
+        } else {
+            params.delete('ofertas');
         }
+
+        if (searchTerm.trim()) {
+            params.set('busca', searchTerm.trim());
+        } else {
+            params.delete('busca');
+        }
+
+        setSearchParams(params, { replace: true });
     };
 
     const handleOffersClick = () => {
         const newOfferState = !isOfferActive;
         setIsOfferActive(newOfferState);
 
+        const params = new URLSearchParams(searchParams);
+
         if (newOfferState) {
-            const params = { ofertas: 'true' };
-            if (activeFilter !== 'Tudo') {
-                const selectedCategory = categoryOptions.find((item) => item.label === activeFilter);
-                if (selectedCategory) {
-                    params.tipo = selectedCategory.id;
-                }
-            }
-            setSearchParams(params);
+            params.set('ofertas', 'true');
         } else {
-            if (activeFilter !== 'Tudo') {
-                const selectedCategory = categoryOptions.find((item) => item.label === activeFilter);
-                if (selectedCategory) {
-                    setSearchParams({ tipo: selectedCategory.id });
-                }
-            } else {
-                setSearchParams({});
-            }
+            params.delete('ofertas');
         }
+
+        if (activeFilter !== 'Tudo') {
+            const selectedCategory = categoryOptions.find((item) => item.label === activeFilter);
+            if (selectedCategory) {
+                params.set('tipo', selectedCategory.id);
+            }
+        } else {
+            params.delete('tipo');
+        }
+
+        if (searchTerm.trim()) {
+            params.set('busca', searchTerm.trim());
+        } else {
+            params.delete('busca');
+        }
+
+        setSearchParams(params, { replace: true });
     };
 
     const filteredProducts = useMemo(() => {
@@ -104,7 +124,22 @@ export function Categories() {
                         </div>
                     </div>
 
-                    <CategorySearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+                    <CategorySearchBar
+                        searchTerm={searchTerm}
+                        onSearchChange={(nextValue) => {
+                            const normalizedValue = nextValue.trim();
+                            const params = new URLSearchParams(searchParams);
+
+                            if (normalizedValue) {
+                                params.set('busca', normalizedValue);
+                            } else {
+                                params.delete('busca');
+                            }
+
+                            setSearchTerm(nextValue);
+                            setSearchParams(params, { replace: true });
+                        }}
+                    />
                 </div>
             </section>
 
