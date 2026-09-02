@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, Heart } from 'lucide-react';
+import { useFavorites } from '../../context/FavoritesContext';
 
 export function HighlightCard({ id, title, image, rating, onClick }) {
     const navigate = useNavigate();
-    const [isFavorite, setIsFavorite] = useState(false);
+    const { toggleFavorite, isFavorite } = useFavorites();
+    const isSaved = isFavorite(id);
 
     const handleClick = () => {
         if (onClick) onClick();
@@ -13,7 +15,7 @@ export function HighlightCard({ id, title, image, rating, onClick }) {
 
     const handleFavoriteClick = (e) => {
         e.stopPropagation();
-        setIsFavorite(!isFavorite);
+        toggleFavorite(id);
     };
 
     return (
@@ -43,7 +45,7 @@ export function HighlightCard({ id, title, image, rating, onClick }) {
                 >
                     <Heart
                         className={`w-4 h-4 transition-colors ${
-                            isFavorite
+                            isSaved
                                 ? 'fill-red-500 text-red-500'
                                 : 'text-white stroke-white fill-none'
                         }`}

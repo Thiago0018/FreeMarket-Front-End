@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
+import { SearchSuggestions } from '../global/SearchSuggestions';
 
 export function CategorySearchBar({ searchTerm, onSearchChange }) {
     return (
@@ -13,6 +14,7 @@ export function CategorySearchBar({ searchTerm, onSearchChange }) {
                     placeholder="Buscar por produtos e categorias..."
                     className="w-full pl-12 pr-6 py-3.5 bg-white text-slate-800 placeholder-slate-400 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm md:text-base"
                 />
+                <SearchSuggestions query={searchTerm} onSelect={(value) => onSearchChange(value)} />
             </div>
         </div>
     );

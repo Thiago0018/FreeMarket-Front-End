@@ -82,6 +82,10 @@ export function Navbar({ cartCount = 0 }) {
                             Ofertas
                         </Link>
 
+                        <Link to="/favoritos" className={`hover:text-emerald-400 transition-colors pb-1 ${isActive('/favoritos') ? 'border-b-2 border-emerald-400 text-emerald-400 font-semibold' : 'text-slate-200'}`}>
+                            Favoritos
+                        </Link>
+
                         <Link to="/minha-conta" className={`hover:text-emerald-400 transition-colors pb-1 ${isActive('/minha-conta') ? 'border-b-2 border-emerald-400 text-emerald-400 font-semibold' : 'text-slate-200'}`}>
                             Minha Conta
                         </Link>
