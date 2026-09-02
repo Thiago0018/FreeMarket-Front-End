@@ -111,7 +111,7 @@ export function Categories() {
         <div className="min-h-screen bg-[#FDF8EE] text-slate-800 font-sans flex flex-col justify-between">
             <Navbar />
 
-            <section className="bg-[#123035] text-white pt-10 pb-14 px-6 md:px-12">
+            <section className="bg-[#2c6868] text-white pt-10 pb-14 px-6 md:px-12">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                         <div>

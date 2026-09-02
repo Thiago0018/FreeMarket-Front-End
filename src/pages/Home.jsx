@@ -63,6 +63,7 @@ export function Home() {
     const [storeStart, setStoreStart] = useState(0);
     const [showAllHighlights, setShowAllHighlights] = useState(false);
     const [showAllStores, setShowAllStores] = useState(false);
+    const [showAllCategories, setShowAllCategories] = useState(false);
 
     const visibleHighlights = useMemo(() => {
         if (showAllHighlights) return destaques;
@@ -73,6 +74,11 @@ export function Home() {
         if (showAllStores) return lojasBairro;
         return lojasBairro.slice(storeStart, storeStart + 5);
     }, [storeStart, showAllStores]);
+
+    const visibleCategories = useMemo(() => {
+        if (showAllCategories) return categoryOptions;
+        return categoryOptions.slice(categoryScrollPosition, categoryScrollPosition + 5);
+    }, [categoryScrollPosition, showAllCategories]);
 
     const handleCategoryScroll = (direction) => {
         const newPosition = direction === 'left' ? categoryScrollPosition - 1 : categoryScrollPosition + 1;
@@ -112,7 +118,7 @@ export function Home() {
         <div className="min-h-screen bg-[#FDF8EE] text-slate-800 font-sans flex flex-col justify-between">
             <Navbar />
 
-            <section className="bg-[#123035] text-white pt-8 pb-16 px-6 md:px-12 relative">
+            <section className="bg-[#2c6868] text-white pt-8 pb-16 px-6 md:px-12 relative">
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
                     <div>
                         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2">MERCADINHO REGIONAL</h1>
@@ -187,7 +193,7 @@ export function Home() {
                             onClick={() => setShowAllHighlights((current) => !current)}
                             className="rounded-full bg-[#123035] px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-[#1a4450]"
                         >
-                            {showAllHighlights ? 'Ver menos' : 'Ver todos os destaques'}
+                            {showAllHighlights ? 'Ver menos' : 'Ver tudo'}
                         </button>
                     </div>
                 </section>
@@ -227,36 +233,18 @@ export function Home() {
                             onClick={() => setShowAllStores((current) => !current)}
                             className="rounded-full bg-[#123035] px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-[#1a4450]"
                         >
-                            {showAllStores ? 'Ver menos' : 'Ver todas'}
+                            {showAllStores ? 'Ver menos' : 'Ver tudo'}
                         </button>
                     </div>
                 </section>
 
                 <section>
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="mb-6 flex items-center justify-between gap-4">
                         <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-wide uppercase">Categorias de Alimentos</h2>
-                        <div className="flex gap-2">
-                            <button
-                                type="button"
-                                onClick={() => handleCategoryScroll('left')}
-                                disabled={categoryScrollPosition === 0}
-                                className="p-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <ChevronLeft className="w-4 h-4" />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handleCategoryScroll('right')}
-                                disabled={categoryScrollPosition >= Math.max(0, categoryOptions.length - 5)}
-                                className="p-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <ChevronRight className="w-4 h-4" />
-                            </button>
-                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        {categoryOptions.slice(categoryScrollPosition, categoryScrollPosition + 5).map((cat) => {
+                        {visibleCategories.map((cat) => {
                             const IconComponent = categoryIcons[cat.id];
                             return (
                                 <Link key={cat.id} to={`/categorias?tipo=${cat.id}`} className="bg-[#F6E8D0] p-6 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer hover:bg-orange-200/50 transition-colors">
@@ -265,6 +253,34 @@ export function Home() {
                                 </Link>
                             );
                         })}
+                    </div>
+
+                    <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={() => handleCategoryScroll('left')}
+                                disabled={showAllCategories || categoryScrollPosition === 0}
+                                className="p-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => handleCategoryScroll('right')}
+                                disabled={showAllCategories || categoryScrollPosition >= Math.max(0, categoryOptions.length - 5)}
+                                className="p-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setShowAllCategories((current) => !current)}
+                            className="rounded-full bg-[#123035] px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-[#1a4450]"
+                        >
+                            {showAllCategories ? 'Ver menos' : 'Ver tudo'}
+                        </button>
                     </div>
                 </section>
             </main>
